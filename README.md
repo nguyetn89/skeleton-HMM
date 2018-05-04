@@ -14,8 +14,7 @@ An implementation of the paper "[Skeleton-based abnormal gait detection](http://
 * Please download the [skeleton data](http://www.iro.umontreal.ca/~labimage/GaitDataset/skeletons.zip) and put the npz file into the folder **dataset**
 
 ## Usage
-```python main.py -d dataset/DIRO_skeletons.npz -l 0 -w 5 -s 24 -o 43 -f 0```
-* -d: dataset path (string)
+```python main.py -l 0 -w 5 -s 24 -o 43 -f 0```
 * -l: use leave-one-out cross-validation (boolean)
 * -w: width of smoothing window (int)
 * -s: number of HMM's states (int)
@@ -39,6 +38,6 @@ processing skel. of subject 7
 window width = 5, states = 24, observations = 43
 kmeans dimension: 7
 TEST RESULTS
-Full sequence:   AUC = 0.852 --- EER = 0.250
-Cycle:           AUC = 0.739 --- EER = 0.335
+Full sequence:   AUC = 0.898 --- EER = 0.250
+Cycle:           AUC = 0.792 --- EER = 0.277
 ```
