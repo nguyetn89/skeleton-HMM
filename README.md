@@ -24,6 +24,7 @@ python main.py -l 0 -w 5 -s 24 -o 43 -f 0
 * -f: write results to file (boolean)
 
 ## Example of output
+Default training and test sets
 ```
 test subject(s): [1 3 6 7]
 Load normal gaits of 5 subjects for training...
@@ -42,4 +43,11 @@ kmeans dimension: 7
 TEST RESULTS
 Full sequence:   AUC = 0.898 --- EER = 0.250
 Cycle:           AUC = 0.792 --- EER = 0.277
+```
+Leave-one-out cross-validation
+```
+...
+Leave-one-out means
+Full sequence:   AUC = 0.806 --- EER = 0.173
+Cycle:           AUC = 0.607 --- EER = 0.417
 ```
