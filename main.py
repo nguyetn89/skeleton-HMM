@@ -105,16 +105,18 @@ def HMMgait3_fullsequence(skel_dataset, test_subjects, n_subjects = 9, n_gaits =
     if save_result:
         filename = 'test_subject_' + ''.join(map(str, test_subjects)) + '.txt'
         write_results_to_file(filename, np.concatenate(([window, state_num, obs_num], result_seq, result_cycle)))
+    '''return values'''
+    return result_seq, result_cycle
 
 def main(argv):
     np.random.seed(1993)
     '''usage: python main.py -l 0 -w 5 -s 24 -o 43 -f 0'''
     parser = argparse.ArgumentParser(description = 'skeleton-based abnormal gait detection')
-    parser.add_argument('-l', '--l1o', help = 'perform leave-one-out cross-validation', required = True)
-    parser.add_argument('-w', '--width', help = 'window width for smoothing', required = True)
-    parser.add_argument('-s', '--states', help = 'number of HMM states', required = True)
-    parser.add_argument('-o', '--observations', help = 'number of HMM observations', required = True)
-    parser.add_argument('-f', '--file', help = 'save result to file', required = True)
+    parser.add_argument('-l', '--l1o', help = 'perform leave-one-out cross-validation', default = 0)
+    parser.add_argument('-w', '--width', help = 'window width for smoothing', default = 5)
+    parser.add_argument('-s', '--states', help = 'number of HMM states', default = 24)
+    parser.add_argument('-o', '--observations', help = 'number of HMM observations', default = 43)
+    parser.add_argument('-f', '--file', help = 'save result to file', default = 0)
     args = vars(parser.parse_args())
     '''read and assign arguments'''
     l1o = bool(int(args['l1o']))
@@ -127,9 +129,17 @@ def main(argv):
     loaded = np.load(data_path)
     data, separation = loaded['data'], loaded['split']
     if l1o:
+        results_seq = np.zeros((data.shape[0], 8))
+        results_cycle = np.zeros((data.shape[0], 8))
         for i in range(data.shape[0]):
-            HMMgait3_fullsequence(data, i, n_subjects = data.shape[0], n_gaits = data.shape[1],\
-                window = window, state_num = state_num, obs_num = obs_num, save_result = save_result)
+            results_seq[i], results_cycle[i] = \
+                HMMgait3_fullsequence(data, i, n_subjects = data.shape[0], n_gaits = data.shape[1],\
+                    window = window, state_num = state_num, obs_num = obs_num, save_result = save_result)
+        results_mean_seq = np.mean(results_seq, axis = 0)
+        results_mean_cycle = np.mean(results_cycle, axis = 0)
+        print('Leave-one-out means')
+        print('Full sequence:   AUC = %.3f --- EER = %.3f' % (results_mean_seq[0], results_mean_seq[1]))
+        print('Cycle:           AUC = %.3f --- EER = %.3f' % (results_mean_cycle[0], results_mean_cycle[1]))
     else:
         HMMgait3_fullsequence(data, np.where(separation == 'test')[0], n_subjects = data.shape[0], n_gaits = data.shape[1],\
             window = window, state_num = state_num, obs_num = obs_num, save_result = save_result)
